@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>أبطال الأمن</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600;800&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap">
+<style>
+/* Layout: one narrow app column; quiz = single card flow; dashboard = summary strip, then charts, then table */
+:root{
+  --bg:#EEF3F1; --surface:#FFFFFF; --sunk:#E3EAE7; --ink:#14292D; --muted:#53686B; --line:#CCD8D4;
+  --accent:#D9480F; --accent-ink:#FFFFFF;
+  --c-safety:#1C6FC2; --c-disaster:#D9480F; --c-evac:#1F8A3B; --c-bus:#E0A800;
+  --ok:#1F8A3B; --ok-bg:#DCF2E2; --bad:#C92A2A; --bad-bg:#FBE1E1; --warn-bg:#FFF3C4;
+  --display:"Baloo Bhaijaan 2","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1B1D; --surface:#172629; --sunk:#1E3134; --ink:#E6EFEC; --muted:#9BB0AC; --line:#2C4245;
+  --accent:#F76B2A; --accent-ink:#1A0A02;
+  --c-safety:#4D9BE6; --c-disaster:#F76B2A; --c-evac:#3FBF62; --c-bus:#F2C232;
+  --ok:#3FBF62; --ok-bg:#163A22; --bad:#F06464; --bad-bg:#3D1A1A; --warn-bg:#3A3110; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1B1D; --surface:#172629; --sunk:#1E3134; --ink:#E6EFEC; --muted:#9BB0AC; --line:#2C4245;
+  --accent:#F76B2A; --accent-ink:#1A0A02;
+  --c-safety:#4D9BE6; --c-disaster:#F76B2A; --c-evac:#3FBF62; --c-bus:#F2C232;
+  --ok:#3FBF62; --ok-bg:#163A22; --bad:#F06464; --bad-bg:#3D1A1A; --warn-bg:#3A3110; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.7}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:16px 48px;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--display);line-height:1.25;margin:0;text-wrap:balance}
+p{margin:0}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{flex:none}
+.brand h1{font-size:1.6rem}
+.brand small{display:block;color:var(--muted);font-family:var(--body);font-size:.8rem;font-weight:500}
+.tabs{display:flex;gap:6px;background:var(--sunk);padding:4px;border-radius:999px}
+.tabs button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-weight:700;font-size:.9rem;color:var(--muted)}
+.tabs button[aria-pressed="true"]{background:var(--surface);color:var(--ink)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:14px}
+.lead{color:var(--muted)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:700;font-size:.92rem}
+.field input,.field select{border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;width:100%}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:10px;font-weight:700}
+.seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.classes{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.classes button{border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 0;font-weight:700;font-family:var(--display);font-size:1.05rem}
+.classes button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.btn{border:0;background:var(--accent);color:var(--accent-ink);font-weight:700;padding:12px 18px;border-radius:12px;font-size:1rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.err{color:var(--bad);font-size:.9rem}
+.hello{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--sunk);border-radius:999px;padding:4px 12px;font-size:.85rem;font-weight:700}
+.linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;font-size:.85rem;padding:0}
+.cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:460px){.cats{grid-template-columns:1fr}}
+.cat{position:relative;text-align:start;border:1.5px solid var(--line);background:var(--surface);border-radius:var(--r);padding:16px;display:flex;gap:12px;align-items:flex-start}
+.cat:hover{border-color:var(--cc)}
+.cat .ic{flex:none;width:48px;height:48px;border-radius:12px;background:var(--cc);display:grid;place-items:center}
+.cat .ic svg{width:28px;height:28px}
+.cat h3{font-size:1.15rem}
+.cat p{color:var(--muted);font-size:.85rem;line-height:1.5}
+.cat .done{position:absolute;top:10px;inset-inline-end:12px;font-size:.75rem;font-weight:700;color:var(--ok)}
+.qhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.progress{display:flex;gap:4px;flex:1;max-width:220px}
+.progress i{flex:1;height:6px;border-radius:3px;background:var(--sunk)}
+.progress i.on{background:var(--cc)}
+.qnum{font-family:var(--display);color:var(--cc);font-size:1rem}
+.qtext{font-family:var(--display);font-size:1.35rem;font-weight:800}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:start;border:1.5px solid var(--line);background:var(--bg);border-radius:12px;padding:12px 14px;font-weight:500;display:flex;gap:10px;align-items:center}
+.opt b{flex:none;width:28px;height:28px;border-radius:50%;background:var(--sunk);display:grid;place-items:center;font-family:var(--display)}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt:disabled{cursor:default}
+.why{background:var(--warn-bg);border-radius:12px;padding:12px 14px;font-size:.95rem}
+.result{align-items:center;text-align:center}
+.medal{width:120px;height:120px}
+.big{font-family:var(--display);font-size:2.6rem;font-weight:800;line-height:1}
+.save{font-size:.85rem;color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.demo{background:var(--warn-bg);border-radius:12px;padding:10px 14px;font-weight:700;font-size:.9rem;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kpi span{display:block;color:var(--muted);font-size:.8rem;font-weight:700}
+.kpi strong{font-family:var(--display);font-size:1.8rem;font-variant-numeric:tabular-nums}
+.card h3{font-size:1.1rem}
+.card .sub{color:var(--muted);font-size:.82rem}
+.bars{display:flex;flex-direction:column;gap:7px}
+.bar{display:grid;grid-template-columns:62px 1fr 48px;gap:8px;align-items:center;font-size:.9rem}
+.bar .lbl{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .track{height:14px;background:var(--sunk);border-radius:7px;overflow:hidden}
+.bar .fill{height:100%;border-radius:7px;background:var(--bc,var(--accent))}
+.bar .val{font-variant-numeric:tabular-nums;font-weight:700;text-align:end}
+.bar.wide{grid-template-columns:110px 1fr 48px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:start;white-space:nowrap}
+th{color:var(--muted);font-weight:700;font-size:.8rem}
+td.num{font-variant-numeric:tabular-nums}
+.heat td.h{text-align:center;font-weight:700;border-radius:6px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:4px;vertical-align:middle}
+.hardq{display:flex;flex-direction:column;gap:8px}
+.hardq div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding-bottom:8px;font-size:.9rem}
+.hardq strong{font-variant-numeric:tabular-nums;color:var(--bad);flex:none}
+.empty{text-align:center;color:var(--muted);padding:24px 8px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.toolbar .btn{padding:9px 14px;font-size:.9rem}
+.note{font-size:.82rem;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.fill{transition:width .5s ease}.opt{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body>
+
+<div class="wrap" dir="rtl" lang="ar">
+  <header class="top">
+    <div class="brand">
+      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 3 L38 9 V21 C38 31 31 38 22 41 C13 38 6 31 6 21 V9 Z" fill="var(--accent)"/><path d="M15 22 l5 5 l9-11" stroke="var(--accent-ink)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><h1>أبطال الأمن</h1><small>السلامة · الكوارث · الإخلاء · النقل المدرسي</small></div>
+    </div>
+    <nav class="tabs" aria-label="التنقل">
+      <button id="tabStudent" aria-pressed="true">الطلاب</button>
+      <button id="tabTeacher" aria-pressed="false">لوحة المعلمة</button>
+    </nav>
+  </header>
+  <main id="app"></main>
+</div>
+
+<script>
+/* =========================================================
+   ⚙️ الإعداد: الصقي هنا رابط Web app من Google Apps Script
+   (الخطوة ٣ في الشرح). لازم ينتهي بـ /exec
+   ========================================================= */
+const API_URL = 'https://script.google.com/macros/s/AKfycbxiWpTLvPA9PjXhmeP9_k6OfMXMEDb7tU51T0NA4vRbyfuFW5kH3NsbJjsW3bdzaxtQcQ/exec';
+
+/* ---------- helpers ---------- */
+const AR='٠١٢٣٤٥٦٧٨٩';
+const ar=s=>String(s).replace(/\d/g,d=>AR[d]);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=s=>document.querySelector(s);
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+
+const GRADES=[6,5,4,3,2,1], SECTIONS=['أ','ب'];
+const GRADE_NAME={1:'الأول',2:'الثاني',3:'الثالث',4:'الرابع',5:'الخامس',6:'السادس'};
+const classLabel=(g,s)=>ar(g)+s;
+
+/* ---------- icons ---------- */
+const ICON={
+ safety:'<svg viewBox="0 0 28 28"><path d="M14 3 L24 7 V14 C24 20 19.5 24 14 26 C8.5 24 4 20 4 14 V7 Z" fill="#fff"/><path d="M14 9 v6 M14 18.5 v.5" stroke="var(--c-safety)" stroke-width="3" stroke-linecap="round"/></svg>',
+ disaster:'<svg viewBox="0 0 28 28"><path d="M14 3 L26 24 H2 Z" fill="#fff"/><path d="M14 10 v7 M14 20 v.5" stroke="var(--c-disaster)" stroke-width="3" stroke-linecap="round"/></svg>',
+ evac:'<svg viewBox="0 0 28 28"><rect x="15" y="4" width="10" height="20" rx="1.5" fill="none" stroke="#fff" stroke-width="2.4"/><circle cx="9" cy="6.5" r="2.4" fill="#fff"/><path d="M9 10 L7 16 L11 18 L10 24 M7 16 L3.5 20 M9 11 L13 14" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+ bus:'<svg viewBox="0 0 28 28"><rect x="4" y="4" width="20" height="17" rx="3" fill="#fff"/><rect x="7" y="7" width="14" height="6" rx="1" fill="var(--c-bus)"/><circle cx="9" cy="23" r="2.4" fill="#fff"/><circle cx="19" cy="23" r="2.4" fill="#fff"/><path d="M8 17h2M18 17h2" stroke="var(--c-bus)" stroke-width="2" stroke-linecap="round"/></svg>'
+};
+
+/* ---------- question bank (6 per category) ---------- */
+const CATS=[
+ {id:'safety',name:'السلامة',color:'var(--c-safety)',desc:'سلامتك في الفصل والممرات والملعب',qs:[
+  {q:'رأيت سلكًا كهربائيًا مكشوفًا في الفصل، ماذا تفعل؟',o:['ألمسه لأتأكد هل فيه كهرباء','أبتعد عنه وأخبر المعلم أو المعلمة فورًا','أغطيه بورقة وأكمل درسي'],a:1,w:'الكهرباء خطيرة جدًا. لا نلمس الأسلاك أبدًا، ونخبر الكبار ليصلحوها.'},
+  {q:'ما الطريقة الآمنة للمشي في الممرات والسلالم؟',o:['الجري حتى أصل بسرعة','المشي بهدوء على اليمين مع مسك الدرابزين','التزاحم مع الزملاء'],a:1,w:'الجري والتزاحم في السلالم يسببان السقوط. نمشي بهدوء ونمسك الدرابزين.'},
+  {q:'كيف أحمل المقص أو القلم الحاد وأنا أمشي؟',o:['والرأس الحاد للأسفل وأمسكه من المقبض','أرفعه للأعلى','أضعه في جيبي ورأسه للأعلى'],a:0,w:'نمسك الأداة الحادة من المقبض ورأسها للأسفل حتى لا نجرح أحدًا.'},
+  {q:'وجدت علبة دواء أو سائلًا غريبًا في المدرسة، ماذا أفعل؟',o:['أتذوقه لأعرف ما هو','لا ألمسه ولا أتذوقه وأخبر الكبار','آخذه معي للبيت'],a:1,w:'المواد المجهولة قد تكون سامة. لا نلمسها ولا نتذوقها أبدًا.'},
+  {q:'الأرضية مبللة بالماء أمامي، ما التصرف الصحيح؟',o:['أتزلج عليها للمتعة','أمشي حولها بحذر وأبلغ المسؤول','أركض فوقها بسرعة'],a:1,w:'الأرض المبللة تسبب الانزلاق. نتجنبها ونبلغ حتى تُنظف.'},
+  {q:'من يستخدم طفاية الحريق في المدرسة؟',o:['أي طالب يريد اللعب بها','الكبار المدرَّبون عليها','لا أحد، هي للزينة'],a:1,w:'الطفاية يستخدمها الكبار المدرَّبون. دوري أن أبتعد عن الخطر وأبلغ.'}
+ ]},
+ {id:'disaster',name:'الحد من الكوارث',color:'var(--c-disaster)',desc:'الزلازل والسيول والعواصف والحريق',qs:[
+  {q:'حدث زلزال وأنا داخل الفصل، ماذا أفعل؟',o:['أركض إلى النافذة','أنخفض وأحتمي تحت الطاولة وأتمسك بها','أقف عند الرفوف'],a:1,w:'القاعدة: انخفض، احتمِ، تمسّك. الطاولة تحميك من الأشياء المتساقطة.'},
+  {q:'ما رقم الدفاع المدني في المملكة؟',o:['٩٩٨','٩٩٩','١٢٣'],a:0,w:'رقم الدفاع المدني ٩٩٨. احفظه وأعطِ عنوانك بوضوح عند الاتصال.'},
+  {q:'نزلت أمطار غزيرة وجرت السيول، أين أكون؟',o:['قرب الوادي لأشاهد الماء','في مكان مرتفع وآمن بعيدًا عن مجاري السيول','أعبر الوادي بالسيارة'],a:1,w:'السيول أقوى مما تبدو. نبتعد عن الأودية ولا نعبرها أبدًا.'},
+  {q:'هبّت عاصفة غبارية قوية، ما التصرف الصحيح؟',o:['أبقى داخل المبنى وأغلق النوافذ','أخرج لألعب في الغبار','أفتح النوافذ للتهوية'],a:0,w:'نبقى في الداخل ونغلق النوافذ، ونغطي الأنف والفم إذا اضطررنا للخروج.'},
+  {q:'اشتعلت النار في ملابس شخص، ماذا يفعل؟',o:['يركض بسرعة','يقف، ينبطح على الأرض، ويتدحرج','يصرخ ويلوّح بيديه'],a:1,w:'قف، انبطح، تدحرج. الجري يزيد النار اشتعالًا.'},
+  {q:'أي هذه الأشياء مهم في حقيبة الطوارئ بالبيت؟',o:['ألعاب إلكترونية','ماء ومصباح يدوي وحقيبة إسعافات أولية','حلويات فقط'],a:1,w:'حقيبة الطوارئ فيها ماء ومصباح وإسعافات أولية وأرقام مهمة.'}
+ ]},
+ {id:'evac',name:'الإخلاء',color:'var(--c-evac)',desc:'جرس الإنذار، المخارج، ونقطة التجمع',qs:[
+  {q:'سمعت جرس إنذار الحريق، ماذا أفعل أولًا؟',o:['أجمع أغراضي وحقيبتي','أترك أغراضي وأتبع المعلم أو المعلمة بهدوء','أختبئ تحت الطاولة'],a:1,w:'الأغراض يمكن تعويضها. نخرج فورًا وبهدوء مع فصلنا.'},
+  {q:'أثناء الإخلاء، هل نستخدم المصعد؟',o:['نعم لأنه أسرع','لا، نستخدم الدرج','فقط إذا كان فارغًا'],a:1,w:'المصعد قد يتوقف أثناء الحريق. نستخدم الدرج دائمًا.'},
+  {q:'امتلأ الممر بالدخان، كيف أمشي؟',o:['أقف وأمشي بسرعة','أنخفض قريبًا من الأرض وأغطي أنفي وفمي','أرجع للفصل وأغلق الباب على نفسي'],a:1,w:'الهواء النظيف يكون قريبًا من الأرض، والدخان يرتفع للأعلى.'},
+  {q:'ما هي نقطة التجمع؟',o:['المكان الآمن خارج المبنى الذي نتجمع فيه مع فصلنا','مقصف المدرسة','أقرب فصل'],a:0,w:'نقطة التجمع مكان آمن محدد مسبقًا، ونبقى فيه مع فصلنا ليتم عدّنا.'},
+  {q:'قبل أن أفتح بابًا أثناء الحريق، ماذا أفعل؟',o:['أفتحه بسرعة','ألمسه بظهر يدي، فإن كان ساخنًا لا أفتحه','أركله بقدمي'],a:1,w:'الباب الساخن يعني أن النار خلفه. نبحث عن مخرج آخر.'},
+  {q:'وصلت لنقطة التجمع وتذكرت أن حقيبتي في الفصل، ماذا أفعل؟',o:['أرجع بسرعة لأحضرها','أبقى في نقطة التجمع ولا أرجع للمبنى','أطلب من صديقي أن يحضرها'],a:1,w:'لا نرجع للمبنى أبدًا حتى يسمح المسؤولون بذلك.'}
+ ]},
+ {id:'bus',name:'النقل المدرسي',color:'var(--c-bus)',desc:'انتظار الحافلة، الركوب، والنزول',qs:[
+  {q:'أين أنتظر الحافلة المدرسية؟',o:['في منتصف الشارع ليراني السائق','على الرصيف بعيدًا عن الطريق','خلف السيارات المتوقفة'],a:1,w:'ننتظر على الرصيف في مكان يرانا فيه السائق، بعيدًا عن السيارات.'},
+  {q:'متى أركب الحافلة أو أنزل منها؟',o:['بعد أن تتوقف تمامًا ويُفتح الباب','وهي تمشي ببطء','عندما أراها قادمة'],a:0,w:'ننتظر حتى تتوقف الحافلة تمامًا ثم نركب أو ننزل واحدًا تلو الآخر.'},
+  {q:'كيف أجلس داخل الحافلة؟',o:['أقف وأتنقل بين المقاعد','أجلس في مقعدي وأربط الحزام إن وُجد','أخرج يدي من النافذة'],a:1,w:'الجلوس وربط الحزام يحميك عند التوقف المفاجئ.'},
+  {q:'سقط قلمي تحت الحافلة، ماذا أفعل؟',o:['أزحف وألتقطه بسرعة','لا ألتقطه وأخبر السائق أو المشرف','أطلب من صديق أن يلتقطه'],a:1,w:'السائق قد لا يراك تحت الحافلة. نخبر الكبار دائمًا.'},
+  {q:'أريد عبور الشارع بعد النزول من الحافلة، كيف؟',o:['من خلف الحافلة مباشرة','من الأمام بمسافة كافية بعد أن يراني السائق','أركض بسرعة دون أن أنظر'],a:1,w:'نعبر من الأمام بمسافة حتى يرانا السائق، وننظر يمينًا ويسارًا.'},
+  {q:'ما التصرف الصحيح مع سائق الحافلة أثناء القيادة؟',o:['أصرخ وألعب لأشغله','أتحدث بصوت هادئ ولا أشتت انتباهه','أرمي الأشياء داخل الحافلة'],a:1,w:'السائق يحتاج تركيزه كاملًا ليوصلنا بأمان.'}
+ ]}
+];
+const CAT=Object.fromEntries(CATS.map(c=>[c.id,c]));
+
+/* ---------- state ---------- */
+let student=ls.get('abtal.student',null);
+let localResults=ls.get('abtal.results',[]);
+let remoteResults=[];
+let view='home', tab='student', quiz=null, lastSave='';
+let teacherOpen=false, teacherKey='', useDemo=false, demoCache=null, loading=false;
+let F={cls:'all',gender:'all',cat:'all'};
+const apiReady=()=>API_URL.startsWith('https://script.google.com/');
+
+/* ---------- Google Sheets ---------- */
+// إرسال نتيجة: نستخدم text/plain عشان المتصفح ما يرفض الطلب (CORS)
+async function sendToSheet(rec){
+  const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'save',record:rec})});
+  const j=await res.json(); if(!j.ok) throw new Error(j.error||'save failed');
+}
+// النتائج اللي ما وصلت (مثلاً النت فصل) نعيد إرسالها لاحقاً
+async function flushPending(){
+  if(!apiReady())return;
+  let pending=ls.get('abtal.pending',[]); if(!pending.length)return;
+  const left=[];
+  for(const r of pending){try{await sendToSheet(r)}catch(e){left.push(r)}}
+  ls.set('abtal.pending',left);
+}
+async function saveResult(rec){
+  localResults.push(rec); ls.set('abtal.results',localResults);
+  if(!apiReady()){lastSave='محفوظة على هذا الجهاز فقط (الموقع غير مربوط بالشيت بعد)';return}
+  try{await sendToSheet(rec);lastSave='وصلت للمعلمة ✓'}
+  catch(e){const p=ls.get('abtal.pending',[]);p.push(rec);ls.set('abtal.pending',p);lastSave='محفوظة على جهازك، وتُرسل تلقائياً عند توفر الإنترنت'}
+}
+// المعلمة تقرأ النتائج، والرمز يُتحقق منه داخل Google (مو موجود في الموقع)
+async function loadResults(key){
+  const res=await fetch(API_URL+'?action=results&key='+encodeURIComponent(key));
+  const j=await res.json(); if(!j.ok) throw new Error(j.error||'error');
+  return j.results;
+}
+flushPending();
+window.addEventListener('online',flushPending);
+
+/* ---------- views: student ---------- */
+let reg={name:'',gender:null,grade:null,section:null};
+function vHome(){
+  if(student) return vCats();
+  const ok=reg.name.trim().length>=2&&reg.gender&&reg.grade&&reg.section;
+  return `<section class="panel">
+    <h2>أهلًا بك يا بطل الأمن!</h2>
+    <p class="lead">سجّل اسمك وفصلك مرة واحدة، ثم اختر أي محور وأجب عن ٦ أسئلة.</p>
+    <div class="field"><label for="nm">الاسم الأول واسم العائلة</label><input id="nm" autocomplete="off" value="${esc(reg.name)}" placeholder="مثال: سارة أحمد"></div>
+    <div class="field"><label>أنا</label><div class="seg">
+      <button data-g="m" aria-pressed="${reg.gender==='m'}">طالب</button>
+      <button data-g="f" aria-pressed="${reg.gender==='f'}">طالبة</button></div></div>
+    <div class="field"><label>فصلي</label><div class="classes">
+      ${GRADES.flatMap(g=>SECTIONS.map(s=>`<button data-cl="${g}|${s}" aria-pressed="${reg.grade===g&&reg.section===s}" aria-label="الصف ${GRADE_NAME[g]} ${s}">${classLabel(g,s)}</button>`)).join('')}
+    </div></div>
+    <button class="btn" id="go" ${ok?'':'disabled'}>ابدأ</button>
+  </section>`;
+}
+function vCats(){
+  const mine=localResults.filter(r=>r.studentKey===skey(student));
+  const best=id=>{const rs=mine.filter(r=>r.cat===id);return rs.length?Math.max(...rs.map(r=>r.score)):null};
+  return `<section class="panel">
+    <div class="hello"><div><h2>${student.gender==='f'?'مرحبًا يا بطلة':'مرحبًا يا بطل'}، ${esc(student.name.split(' ')[0])}</h2>
+    <span class="chip">الصف ${GRADE_NAME[student.grade]} · فصل ${classLabel(student.grade,student.section)}</span></div>
+    <button class="linkbtn" id="logout">لست ${esc(student.name.split(' ')[0])}؟ تسجيل طالب آخر</button></div>
+  </section>
+  <div class="cats">${CATS.map(c=>{const b=best(c.id);return `<button class="cat" data-cat="${c.id}" style="--cc:${c.color}">
+    <span class="ic">${ICON[c.id]}</span><span><h3>${c.name}</h3><p>${c.desc} · ${ar(6)} أسئلة</p></span>
+    ${b!==null?`<span class="done">أفضل نتيجة ${ar(b)}/${ar(6)}</span>`:''}</button>`}).join('')}</div>`;
+}
+function vQuiz(){
+  const c=CAT[quiz.cat], i=quiz.i, q=c.qs[i], ans=quiz.answers[i];
+  return `<section class="panel" style="--cc:${c.color}">
+    <div class="qhead"><span class="qnum">${c.name} · سؤال ${ar(i+1)} من ${ar(6)}</span>
+      <div class="progress">${c.qs.map((_,k)=>`<i class="${k<=i?'on':''}"></i>`).join('')}</div></div>
+    <p class="qtext">${q.q}</p>
+    <div class="opts">${q.o.map((o,k)=>{let cls='';if(ans!==undefined){if(k===q.a)cls='right';else if(k===ans)cls='wrong'}
+      return `<button class="opt ${cls}" data-o="${k}" ${ans!==undefined?'disabled':''}><b>${'أبج'[k]}</b>${o}</button>`}).join('')}</div>
+    ${ans!==undefined?`<p class="why"><strong>${ans===q.a?'إجابة صحيحة! ':'انتبه: '}</strong>${q.w}</p>
+      <button class="btn" id="next">${i<5?'السؤال التالي':'شاهد نتيجتك'}</button>`:''}
+  </section>`;
+}
+function vResult(){
+  const c=CAT[quiz.cat], s=quiz.score, hero=s>=5;
+  const medal=`<svg class="medal" viewBox="0 0 120 120" aria-hidden="true"><path d="M42 8h14l8 30h-14zM78 8H64l-8 30h14z" fill="${c.color}"/><circle cx="60" cy="74" r="38" fill="${hero?'var(--c-bus)':'var(--sunk)'}"/><circle cx="60" cy="74" r="28" fill="none" stroke="var(--surface)" stroke-width="3"/><text x="60" y="86" text-anchor="middle" font-family="Baloo Bhaijaan 2, Tahoma" font-weight="800" font-size="32" fill="var(--ink)">${ar(s)}/${ar(6)}</text></svg>`;
+  const t=student.gender==='f'?(hero?'أنتِ بطلة الأمن!':s>=3?'أحسنتِ، اقتربتِ!':'حاولي مرة أخرى'):(hero?'أنت بطل الأمن!':s>=3?'أحسنت، اقتربت!':'حاول مرة أخرى');
+  return `<section class="panel result" style="--cc:${c.color}">${medal}
+    <h2>${t}</h2><p class="lead">محور ${c.name}: ${ar(s)} إجابات صحيحة من ${ar(6)}</p>
+    <p class="save">النتيجة ${lastSave||'تُحفظ…'}</p>
+    <div class="actions"><button class="btn" id="again">أعد المحاولة</button><button class="btn ghost" id="home">اختر محورًا آخر</button></div>
+  </section>`;
+}
+const skey=s=>`${s.name.trim().replace(/\s+/g,' ')}|${s.gender}|${s.grade}${s.section}`;
+
+/* ---------- views: teacher dashboard ---------- */
+function allResults(){
+  if(useDemo) return demoCache||(demoCache=makeDemo());
+  return remoteResults;
+}
+function vTeacherGate(){
+  return `<section class="panel"><h2>لوحة المعلمة</h2><p class="lead">أدخلي رمز الدخول لعرض نتائج الطلاب والطالبات.</p>
+    ${apiReady()?'':'<p class="err">الموقع غير مربوط بـ Google Sheets بعد. ضعي رابط Web app في API_URL.</p>'}
+    <div class="field"><label for="pin">رمز الدخول</label><input id="pin" type="password" autocomplete="off"></div>
+    <p class="err" id="pinErr" hidden></p><button class="btn" id="pinGo" ${loading?'disabled':''}>${loading?'جارٍ التحميل…':'دخول'}</button></section>`;
+}
+function bar(lbl,v,color,wide,count){return `<div class="bar ${wide?'wide':''}" style="--bc:${color}"><span class="lbl">${lbl}</span><span class="track"><span class="fill" style="width:${v===null?0:v}%"></span></span><span class="val">${v===null?'—':ar(v)+'٪'}</span></div>`}
+function heatColor(v){if(v===null)return 'var(--sunk)';return v>=80?'var(--ok-bg)':v>=60?'var(--warn-bg)':'var(--bad-bg)'}
+function vDash(){
+  let rs=allResults();
+  const filt=rs.filter(r=>(F.cls==='all'||r.grade+r.section===F.cls)&&(F.gender==='all'||r.gender===F.gender)&&(F.cat==='all'||r.cat===F.cat));
+  const students=new Set(filt.map(r=>r.studentKey));
+  const avg=a=>a.length?Math.round(a.reduce((x,r)=>x+r.score/6*100,0)/a.length):null;
+  const heroes=new Set(); const byStu={};
+  filt.forEach(r=>{(byStu[r.studentKey]=byStu[r.studentKey]||{r,cats:{}});const c=byStu[r.studentKey].cats;c[r.cat]=Math.max(c[r.cat]||0,r.score)});
+  Object.values(byStu).forEach(s=>{if(Object.values(s.cats).some(v=>v>=5))heroes.add(s.r.studentKey)});
+  const classes=GRADES.flatMap(g=>SECTIONS.map(s=>({k:g+s,l:classLabel(g,s),g,s})));
+  const inCls=k=>rs.filter(r=>r.grade+r.section===k&&(F.gender==='all'||r.gender===F.gender)&&(F.cat==='all'||r.cat===F.cat));
+  const base=rs.filter(r=>(F.cls==='all'||r.grade+r.section===F.cls)&&(F.gender==='all'||r.gender===F.gender));
+  // hardest questions
+  const qs=[];CATS.forEach(c=>{if(F.cat!=='all'&&F.cat!==c.id)return;c.qs.forEach((q,i)=>{const a=filt.filter(r=>r.cat===c.id);if(!a.length)return;qs.push({c,q:q.q,i,p:pct(a.filter(r=>r.answers[i]===1).length,a.length),n:a.length})})});
+  qs.sort((a,b)=>a.p-b.p);
+  // leaderboard: total of best per category
+  const lead=Object.values(byStu).map(s=>({r:s.r,t:Object.values(s.cats).reduce((a,b)=>a+b,0),n:Object.keys(s.cats).length})).sort((a,b)=>b.t-a.t||b.n-a.n).slice(0,8);
+  const m=filt.filter(r=>r.gender==='m'),f=filt.filter(r=>r.gender==='f');
+  const opt=(v,l,cur)=>`<option value="${v}" ${cur===v?'selected':''}>${l}</option>`;
+  const empty=!rs.length;
+  return `${useDemo?`<div class="demo"><span>تعرضين الآن بيانات تجريبية للتوضيح فقط، وليست نتائج حقيقية.</span><button class="btn ghost" id="demoOff">عرض النتائج الحقيقية</button></div>`:''}
+  <section class="panel">
+    <div class="hello"><h2>لوحة نتائج أبطال الأمن</h2>
+      <div class="toolbar">${!useDemo?'<button class="btn ghost" id="demoOn">عرض بيانات تجريبية</button><button class="btn ghost" id="refresh">تحديث</button>':''}<button class="btn" id="csv" ${filt.length?'':'disabled'}>تصدير CSV</button></div></div>
+    <p class="note">النتائج من Google Sheets. اضغطي «تحديث» لجلب آخر النتائج.</p>
+    <div class="filters">
+      <div class="field"><label for="fCls">الفصل</label><select id="fCls">${opt('all','كل الفصول',F.cls)}${classes.map(c=>opt(c.k,'فصل '+c.l,F.cls)).join('')}</select></div>
+      <div class="field"><label for="fG">الفئة</label><select id="fG">${opt('all','الطلاب والطالبات',F.gender)}${opt('m','الطلاب',F.gender)}${opt('f','الطالبات',F.gender)}</select></div>
+      <div class="field"><label for="fC">المحور</label><select id="fC">${opt('all','كل المحاور',F.cat)}${CATS.map(c=>opt(c.id,c.name,F.cat)).join('')}</select></div>
+    </div>
+  </section>
+  ${empty?`<section class="panel empty"><h3>لا توجد نتائج بعد</h3><p>عندما يسجل الطلاب والطالبات ويجيبون عن الأسئلة، تظهر نتائجهم هنا حسب الفصل والمحور.</p></section>`:`
+  <div class="kpis">
+    <div class="kpi"><span>المشاركون</span><strong>${ar(students.size)}</strong></div>
+    <div class="kpi"><span>المحاولات</span><strong>${ar(filt.length)}</strong></div>
+    <div class="kpi"><span>متوسط الإجابات الصحيحة</span><strong>${avg(filt)===null?'—':ar(avg(filt))+'٪'}</strong></div>
+    <div class="kpi"><span>أبطال الأمن (٥ من ٦ فأكثر)</span><strong>${ar(heroes.size)}</strong></div>
+  </div>
+  <section class="panel card"><h3>متوسط الدرجة لكل فصل</h3><p class="sub">نسبة الإجابات الصحيحة، من السادس إلى الأول</p>
+    <div class="bars">${classes.map(c=>bar('فصل '+c.l,avg(inCls(c.k)),F.cls===c.k?'var(--accent)':'var(--ink)')).join('')}</div></section>
+  <section class="panel card"><h3>أي محور يحتاج تقوية؟</h3><p class="sub">متوسط النسبة في كل محور للفصول المختارة</p>
+    <div class="bars">${CATS.map(c=>bar(c.name,avg(base.filter(r=>r.cat===c.id)),c.color,true)).join('')}</div></section>
+  <section class="panel card"><h3>خريطة الفصول والمحاور</h3>
+    <div class="legend"><span><i style="background:var(--ok-bg)"></i>٨٠٪ فأكثر</span><span><i style="background:var(--warn-bg)"></i>٦٠–٧٩٪</span><span><i style="background:var(--bad-bg)"></i>أقل من ٦٠٪</span></div>
+    <div class="scroll"><table class="heat"><thead><tr><th>الفصل</th>${CATS.map(c=>`<th>${c.name}</th>`).join('')}</tr></thead><tbody>
+    ${classes.map(cl=>`<tr><td><strong>${cl.l}</strong></td>${CATS.map(c=>{const v=avg(rs.filter(r=>r.grade+r.section===cl.k&&r.cat===c.id&&(F.gender==='all'||r.gender===F.gender)));return `<td class="h" style="background:${heatColor(v)}">${v===null?'—':ar(v)+'٪'}</td>`}).join('')}</tr>`).join('')}
+    </tbody></table></div></section>
+  <section class="panel card"><h3>الطلاب مقابل الطالبات</h3>
+    <div class="bars">${bar('الطلاب',avg(m),'var(--c-safety)',true)}${bar('الطالبات',avg(f),'var(--c-evac)',true)}</div>
+    <p class="sub">${ar(new Set(m.map(r=>r.studentKey)).size)} طالب · ${ar(new Set(f.map(r=>r.studentKey)).size)} طالبة</p></section>
+  <section class="panel card"><h3>أصعب الأسئلة</h3><p class="sub">أقل نسبة إجابة صحيحة، لتركّزي عليها في التوعية</p>
+    <div class="hardq">${qs.slice(0,5).map(x=>`<div><span><span class="chip" style="font-size:.72rem">${x.c.name}</span> ${x.q}</span><strong>${ar(x.p)}٪</strong></div>`).join('')||'<p class="note">لا توجد بيانات كافية.</p>'}</div></section>
+  <section class="panel card"><h3>لوحة الأبطال</h3><p class="sub">مجموع أفضل نتيجة في كل محور (من ٢٤)</p>
+    <div class="scroll"><table><thead><tr><th>#</th><th>الاسم</th><th>الفصل</th><th>المحاور</th><th>المجموع</th></tr></thead><tbody>
+    ${lead.map((x,i)=>`<tr><td class="num">${ar(i+1)}</td><td>${esc(x.r.name)}</td><td>${classLabel(x.r.grade,x.r.section)}</td><td class="num">${ar(x.n)}/${ar(4)}</td><td class="num"><strong>${ar(x.t)}</strong></td></tr>`).join('')}
+    </tbody></table></div></section>
+  <section class="panel card"><h3>آخر المحاولات</h3>
+    <div class="scroll"><table><thead><tr><th>الاسم</th><th>الفصل</th><th>المحور</th><th>الدرجة</th><th>الوقت</th></tr></thead><tbody>
+    ${[...filt].sort((a,b)=>b.ts-a.ts).slice(0,15).map(r=>`<tr><td>${esc(r.name)}</td><td>${classLabel(r.grade,r.section)}</td><td>${CAT[r.cat].name}</td><td class="num">${ar(r.score)}/${ar(6)}</td><td class="num">${new Date(r.ts).toLocaleString('ar-SA',{dateStyle:'short',timeStyle:'short'})}</td></tr>`).join('')}
+    </tbody></table></div></section>`}
+  <p class="note" id="csvMsg" hidden></p>`;
+}
+
+/* ---------- demo data (illustration only) ---------- */
+function makeDemo(){
+  let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+  const mN=['محمد','عبدالله','فيصل','سعود','يوسف','خالد','عمر','تركي','نواف','سلمان'],fN=['سارة','نورة','ريم','لمى','جود','هيا','رهف','دانة','ليان','شهد'],fam=['العتيبي','الحربي','القحطاني','الجهني','الشمري','المطيري'];
+  const out=[];
+  GRADES.forEach(g=>SECTIONS.forEach(s=>{for(let k=0;k<5;k++){const gen=rnd()<.5?'m':'f';const name=(gen==='m'?mN:fN)[Math.floor(rnd()*10)]+' '+fam[Math.floor(rnd()*6)]+' (تجريبي)';
+    CATS.forEach(c=>{if(rnd()<.25)return;const skill=.45+g*.06+(c.id==='bus'?-.12:0)+(c.id==='safety'?.05:0);const answers=c.qs.map((_,i)=>rnd()<skill-(i===4?.15:0)?1:0);
+      out.push({id:'demo'+out.length,name,gender:gen,grade:g,section:s,studentKey:name+gen+g+s,cat:c.id,answers,score:answers.reduce((a,b)=>a+b,0),ts:Date.now()-Math.floor(rnd()*864e6)})})}}));
+  return out;
+}
+
+/* ---------- CSV ---------- */
+async function exportCSV(){
+  const rs=allResults().filter(r=>(F.cls==='all'||r.grade+r.section===F.cls)&&(F.gender==='all'||r.gender===F.gender)&&(F.cat==='all'||r.cat===F.cat));
+  const head=['name','gender','grade','section','class','category','score','max','percent','date','q1','q2','q3','q4','q5','q6'];
+  const lines=rs.map(r=>[r.name,r.gender==='f'?'طالبة':'طالب',r.grade,r.section,r.grade+r.section,CAT[r.cat].name,r.score,6,Math.round(r.score/6*100),new Date(r.ts).toISOString(),...r.answers].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  const csv='﻿'+head.join(',')+'\n'+lines.join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='abtal-alamn-results.csv'; document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ---------- render + events ---------- */
+function render(){
+  $('#tabStudent').setAttribute('aria-pressed',tab==='student');$('#tabTeacher').setAttribute('aria-pressed',tab==='teacher');
+  const app=$('#app');
+  if(tab==='teacher'){app.innerHTML=teacherOpen?vDash():vTeacherGate();return}
+  app.innerHTML=view==='quiz'?vQuiz():view==='result'?vResult():vHome();
+}
+$('#tabStudent').onclick=()=>{tab='student';render()};
+$('#tabTeacher').onclick=()=>{tab='teacher';render()};
+document.addEventListener('input',e=>{
+  if(e.target.id==='nm'){reg.name=e.target.value;const b=$('#go');if(b)b.disabled=!(reg.name.trim().length>=2&&reg.gender&&reg.grade&&reg.section)}
+});
+document.addEventListener('change',e=>{
+  if(e.target.id==='fCls'){F.cls=e.target.value;render()}
+  if(e.target.id==='fG'){F.gender=e.target.value;render()}
+  if(e.target.id==='fC'){F.cat=e.target.value;render()}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='pin')$('#pinGo').click()});
+document.addEventListener('click',async e=>{
+  const t=e.target.closest('button');if(!t||!$('#app').contains(t))return;
+  if(t.dataset.g){reg.gender=t.dataset.g;render();$('#nm')&&$('#nm').focus()}
+  else if(t.dataset.cl){const[g,s]=t.dataset.cl.split('|');reg.grade=+g;reg.section=s;render()}
+  else if(t.id==='go'){student={name:reg.name.trim().replace(/\s+/g,' '),gender:reg.gender,grade:reg.grade,section:reg.section};ls.set('abtal.student',student);render()}
+  else if(t.id==='logout'){student=null;ls.del('abtal.student');reg={name:'',gender:null,grade:null,section:null};render()}
+  else if(t.dataset.cat){quiz={cat:t.dataset.cat,i:0,answers:[]};view='quiz';render()}
+  else if(t.dataset.o!==undefined&&quiz){quiz.answers[quiz.i]=+t.dataset.o;render()}
+  else if(t.id==='next'){if(quiz.i<5){quiz.i++;render()}else{const c=CAT[quiz.cat];const answers=c.qs.map((q,i)=>quiz.answers[i]===q.a?1:0);quiz.score=answers.reduce((a,b)=>a+b,0);
+      lastSave='';view='result';render();
+      await saveResult({id:uid(),name:student.name,gender:student.gender,grade:student.grade,section:student.section,studentKey:skey(student),cat:quiz.cat,answers,score:quiz.score,ts:Date.now()});
+      if(view==='result')render()}}
+  else if(t.id==='again'){quiz={cat:quiz.cat,i:0,answers:[]};view='quiz';render()}
+  else if(t.id==='home'){view='home';render()}
+  else if(t.id==='pinGo'){
+    const key=$('#pin').value.trim(), err=$('#pinErr');
+    if(!apiReady()){err.textContent='اربطي الموقع بالشيت أولاً.';err.hidden=false;return}
+    loading=true;render();
+    try{remoteResults=await loadResults(key);teacherKey=key;teacherOpen=true}
+    catch(ex){loading=false;render();const e2=$('#pinErr');e2.textContent=ex.message==='wrong key'?'الرمز غير صحيح.':'تعذّر الاتصال، تأكدي من الإنترنت ومن رابط Web app.';e2.hidden=false;return}
+    loading=false;render()}
+  else if(t.id==='refresh'){try{remoteResults=await loadResults(teacherKey);render()}catch(ex){}}
+  else if(t.id==='demoOn'){useDemo=true;render()}
+  else if(t.id==='demoOff'){useDemo=false;render()}
+  else if(t.id==='csv'){exportCSV()}
+});
+render();
+</script>
+
+</body>
+</html>
